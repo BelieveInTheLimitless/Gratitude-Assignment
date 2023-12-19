@@ -1,4 +1,4 @@
-package com.example.gratitudeassignment.model
+package com.example.gratitudeassignment.model.data.remote
 
 data class DailyZenItem(
     val articleUrl: String,
