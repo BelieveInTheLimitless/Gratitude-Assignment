@@ -4,6 +4,10 @@
 
     <uses-permission android:name="android.permission.INTERNET"/>
 
+    <queries> <package android:name="com.whatsapp" /> </queries>
+    <queries> <package android:name="com.instagram.android" /> </queries>
+    <queries> <package android:name="com.facebook.katana" /> </queries>
+
     <application
         android:name=".GratitudeApplication"
         android:allowBackup="true"
