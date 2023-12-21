@@ -1,9 +1,11 @@
 package com.example.gratitudeassignment.view
 
-
 import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context.CLIPBOARD_SERVICE
+import android.content.Intent
+import android.content.pm.PackageManager
+import android.net.Uri
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.ScrollState
@@ -66,7 +68,9 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
-import coil.compose.SubcomposeAsyncImage
+import coil.compose.AsyncImage
+import coil.request.CachePolicy
+import coil.request.ImageRequest
 import com.example.gratitudeassignment.R
 import com.example.gratitudeassignment.model.data.remote.DailyZenItem
 import com.example.gratitudeassignment.viewmodel.MainViewModel
@@ -101,93 +105,92 @@ fun MainContent(mainViewModel: MainViewModel = hiltViewModel()){
             .background(color = if (isSystemInDarkTheme()) Color(0xFF201A1B) else Color(0xFFFFFFFF)),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(16.dp),
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.Top,
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(16.dp),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.Top,
+            ) {
+                IconButton(
+                    onClick = {
+                        dateId.intValue -= 1
+                        date.value = LocalDate
+                            .now()
+                            .minusDays(dateId.intValue.toLong())
+                            .format(DateTimeFormatter.ofPattern("yyyyMMdd"))
+                            .toString()
+                        day.value = currentDay(date = date.value, dateId = dateId.intValue)
+                        mainViewModel.getCustomDailyZen(customDate = date.value)
+                    },
+                    enabled = (dateId.intValue > 0)
                 ) {
-                    IconButton(
-                        onClick = {
-                            dateId.intValue -= 1
-                            date.value = LocalDate
-                                .now()
-                                .minusDays(dateId.intValue.toLong())
-                                .format(DateTimeFormatter.ofPattern("yyyyMMdd"))
-                                .toString()
-                            day.value = currentDay(date = date.value, dateId = dateId.intValue)
-                            mainViewModel.getCustomDailyZen(customDate = date.value)
-                        },
-                        enabled = (dateId.intValue > 0)
-                    ) {
-                        Icon(
-                            imageVector = Icons.Default.KeyboardArrowLeft,
-                            contentDescription = "Arrow Left",
-                            modifier = Modifier
-                                .size(50.dp)
-                        )
-                    }
-                    Text(
-                        text = day.value,
+                    Icon(
+                        imageVector = Icons.Default.KeyboardArrowLeft,
+                        contentDescription = "Arrow Left",
                         modifier = Modifier
-                            .align(alignment = Alignment.CenterVertically),
-                        style = TextStyle(
-                            fontSize = 22.sp,
-                            lineHeight = 28.sp,
-                            fontWeight = FontWeight(400),
-                        )
+                            .size(50.dp)
                     )
-                    IconButton(
-                        onClick = {
-                            dateId.intValue += 1
-                            date.value = LocalDate
-                                .now()
-                                .minusDays(dateId.intValue.toLong())
-                                .format(DateTimeFormatter.ofPattern("yyyyMMdd"))
-                                .toString()
-                            day.value = currentDay(date = date.value, dateId = dateId.intValue)
-                            mainViewModel.getCustomDailyZen(customDate = date.value)
-                        },
-                        enabled = (dateId.intValue < 7)
-                    ) {
-                        Icon(
-                            imageVector = Icons.Default.KeyboardArrowRight,
-                            contentDescription = "Arrow Right",
-                            modifier = Modifier
-                                .size(50.dp)
-                        )
-                    }
                 }
-
-                Column(
+                Text(
+                    text = day.value,
                     modifier = Modifier
-                        .fillMaxWidth()
-                        .fillMaxHeight()
-                        .verticalScroll(state = ScrollState(0), true),
-                    horizontalAlignment = Alignment.CenterHorizontally
+                        .align(alignment = Alignment.CenterVertically),
+                    style = TextStyle(
+                        fontSize = 22.sp,
+                        lineHeight = 28.sp,
+                        fontWeight = FontWeight(400),
+                    )
+                )
+                IconButton(
+                    onClick = {
+                        dateId.intValue += 1
+                        date.value = LocalDate
+                            .now()
+                            .minusDays(dateId.intValue.toLong())
+                            .format(DateTimeFormatter.ofPattern("yyyyMMdd"))
+                            .toString()
+                        day.value = currentDay(date = date.value, dateId = dateId.intValue)
+                        mainViewModel.getCustomDailyZen(customDate = date.value)
+                    },
+                    enabled = (dateId.intValue < 7)
                 ) {
-                    dailyZenData.data!!.forEach {
-                        CustomizedCard(data = it)
-                    }
-
-                    Image(
-                        painter = painterResource(id = R.drawable.frame),
-                        contentDescription = "frame",
+                    Icon(
+                        imageVector = Icons.Default.KeyboardArrowRight,
+                        contentDescription = "Arrow Right",
                         modifier = Modifier
-                            .padding(top = 50.dp)
-                            .size(125.dp)
-                            .aspectRatio(127f / 128f)
+                            .size(50.dp)
                     )
-                    Text(
-                        text = "That’s the Zen for today!\n See you tomorrow :)",
-                        modifier = Modifier
-                            .padding(bottom = 75.dp),
-                        fontSize = 12.sp
-                    )
-
                 }
             }
+
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .fillMaxHeight()
+                    .verticalScroll(state = ScrollState(0), true),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                dailyZenData.data!!.forEach {
+                    CustomizedCard(data = it)
+                }
+
+                Image(
+                    painter = painterResource(id = R.drawable.frame),
+                    contentDescription = "frame",
+                    modifier = Modifier
+                        .padding(top = 50.dp)
+                        .size(125.dp)
+                        .aspectRatio(127f / 128f)
+                )
+                Text(
+                    text = "That’s the Zen for today!\n See you tomorrow :)",
+                    modifier = Modifier
+                        .padding(bottom = 75.dp),
+                    fontSize = 12.sp
+                )
+            }
+        }
     }
 }
 
@@ -237,7 +240,14 @@ fun CustomizedCard(data: DailyZenItem){
             )
         }
 
-        SubcomposeAsyncImage(model = data.dzImageUrl,
+        val context = LocalContext.current
+        val imageRequest = ImageRequest.Builder(context)
+            .data(data.dzImageUrl)
+            .diskCacheKey(data.dzImageUrl)
+            .diskCachePolicy(CachePolicy.ENABLED)
+            .build()
+
+        AsyncImage(model = imageRequest,
             contentDescription = null,
             modifier = Modifier
                 .fillMaxWidth()
@@ -297,7 +307,9 @@ fun CustomizedCard(data: DailyZenItem){
                 Icon(imageVector = Icons.Default.Share, contentDescription = "Share")
             }
 
-            CustomIconButton(imageVector = Icons.Outlined.BookmarkBorder, contentDescription = "Bookmark")
+            CustomIconButton(imageVector = Icons.Outlined.BookmarkBorder, contentDescription = "Bookmark"){
+
+            }
         }
         CustomizedBottomSheet(showBottomSheet = showBottomSheet, data = data)
     }
@@ -310,6 +322,7 @@ fun CustomizedBottomSheet(showBottomSheet: MutableState<Boolean>, data: DailyZen
     val sheetState = rememberModalBottomSheetState()
 
     val context = LocalContext.current
+    val packageManager = context.packageManager
 
     if (showBottomSheet.value){
         ModalBottomSheet(
@@ -340,7 +353,7 @@ fun CustomizedBottomSheet(showBottomSheet: MutableState<Boolean>, data: DailyZen
                     }
                 }
 
-                SubcomposeAsyncImage(model = data.dzImageUrl,
+                AsyncImage(model = data.dzImageUrl,
                     contentDescription = null,
                     modifier = Modifier
                         .padding(start = 16.dp, end = 16.dp)
@@ -434,21 +447,99 @@ fun CustomizedBottomSheet(showBottomSheet: MutableState<Boolean>, data: DailyZen
                     .fillMaxWidth(),
                     horizontalArrangement = Arrangement.SpaceBetween) {
 
-                    ShareIconButton(id = R.drawable.whatsapp, contentDescription = "whatsapp") {
-                        
+                    if (isWhatsAppInstalled(packageManager)){
+                        ShareIconButton(id = R.drawable.whatsapp, contentDescription = "whatsapp") {
+                            val url = "https://api.whatsapp.com/send"
+                            val intent: Intent = try {
+                                Intent(Intent.ACTION_SEND).apply {
+                                    putExtra(Intent.EXTRA_TEXT, data.sharePrefix)
+                                    type = "text/plain"
+                                    `package` = "com.whatsapp"
+                                }
+                            } catch (e: PackageManager.NameNotFoundException) {
+                                Intent(Intent.ACTION_VIEW, Uri.parse(url))
+                            }
+                            context.startActivity(intent)
+                        }
                     }
-                    ShareIconButton(id = R.drawable.insta, contentDescription = "instagram") {
-                        
+
+                    if(isInstagramInstalled(packageManager)){
+                        ShareIconButton(id = R.drawable.insta, contentDescription = "instagram") {
+                            val url = "https://www.instagram.com/"
+                            val intent: Intent = try {
+                                Intent(Intent.ACTION_SEND).apply {
+                                    putExtra(Intent.EXTRA_TEXT, data.sharePrefix)
+                                    type = "text/plain"
+                                    `package` = "com.instagram.android"
+                                }
+                            } catch (e: PackageManager.NameNotFoundException) {
+                                Intent(Intent.ACTION_VIEW, Uri.parse(url))
+                            }
+                            context.startActivity(intent)
+                        }
                     }
-                    ShareIconButton(id = R.drawable.fb, contentDescription = "facebook") {
+
+                    if (isFacebookInstalled(packageManager)){
+                        ShareIconButton(id = R.drawable.fb, contentDescription = "facebook") {
+                            val url = "https://www.facebook.com/"
+                            val intent: Intent = try {
+                                Intent(Intent.ACTION_SEND).apply {
+                                    putExtra(Intent.EXTRA_TEXT, data.sharePrefix)
+                                    type = "text/plain"
+                                    `package` = "com.facebook.katana"
+                                }
+                            } catch (e: PackageManager.NameNotFoundException) {
+                                Intent(Intent.ACTION_VIEW, Uri.parse(url))
+                            }
+                            context.startActivity(intent)
+                        }
+                    }
+
+                    CustomIconButton(imageVector = Icons.Outlined.Download, contentDescription = "Download"){
 
                     }
 
-                    CustomIconButton(imageVector = Icons.Outlined.Download, contentDescription = "More")
-                    CustomIconButton(imageVector = Icons.Outlined.MoreHoriz, contentDescription = "More")
+                    CustomIconButton(imageVector = Icons.Outlined.MoreHoriz, contentDescription = "More"){
+                        val sendIntent: Intent = Intent().apply {
+                            action = Intent.ACTION_SEND
+                            putExtra(Intent.EXTRA_TEXT, data.sharePrefix)
+                            type = "text/plain"
+                        }
+                        val shareIntent = Intent.createChooser(sendIntent, null)
+                        context.startActivity(shareIntent)
+                    }
                 }
             }
         }
+    }
+}
+
+
+
+fun isWhatsAppInstalled(packageManager: PackageManager): Boolean {
+    return try {
+        packageManager.getPackageInfo("com.whatsapp", PackageManager.GET_ACTIVITIES)
+        true // WhatsApp is installed
+    } catch (e: PackageManager.NameNotFoundException) {
+        false // WhatsApp is not installed
+    }
+}
+
+fun isInstagramInstalled(packageManager: PackageManager): Boolean {
+    return try {
+        packageManager.getPackageInfo("com.instagram.android", PackageManager.GET_ACTIVITIES)
+        true // Instagram is installed
+    } catch (e: PackageManager.NameNotFoundException) {
+        false // Instagram is not installed
+    }
+}
+
+fun isFacebookInstalled(packageManager: PackageManager): Boolean {
+    return try {
+        packageManager.getPackageInfo("com.facebook.katana", PackageManager.GET_ACTIVITIES)
+        true // Facebook is installed
+    } catch (e: PackageManager.NameNotFoundException) {
+        false // Facebook is not installed
     }
 }
 
@@ -456,16 +547,6 @@ fun CustomizedBottomSheet(showBottomSheet: MutableState<Boolean>, data: DailyZen
 fun ShareIconButton(modifier: Modifier = Modifier, id: Int, contentDescription: String, onClicked: () -> Unit){
     IconButton(onClick = {
         onClicked()
-
-//                        val shareIntent = Intent()
-//                        shareIntent.setAction(Intent.ACTION_SEND)
-//                        shareIntent.putExtra(Intent.EXTRA_TEXT, data.sharePrefix+"\n"+data.articleUrl)
-//                        shareIntent.putExtra(Intent.EXTRA_STREAM, data.dzImageUrl.toUri())
-//                        shareIntent.setType("image/*")
-//                        shareIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
-//                        val share = Intent.createChooser(shareIntent, null)
-//                        context.startActivity(share)
-
     },
         modifier = modifier) {
         Image(painter = painterResource(id = id),
@@ -476,8 +557,10 @@ fun ShareIconButton(modifier: Modifier = Modifier, id: Int, contentDescription: 
 }
 
 @Composable
-fun CustomIconButton(modifier: Modifier = Modifier, imageVector: ImageVector, contentDescription: String){
-    IconButton(onClick = { /*TODO*/ },
+fun CustomIconButton(modifier: Modifier = Modifier, imageVector: ImageVector, contentDescription: String, onClicked: () -> Unit){
+    IconButton(onClick = {
+                         onClicked()
+                         },
         modifier = modifier,
         colors  = IconButtonDefaults
             .iconButtonColors(
