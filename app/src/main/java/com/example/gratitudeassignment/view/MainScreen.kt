@@ -35,6 +35,7 @@ import androidx.compose.material.icons.outlined.Article
 import androidx.compose.material.icons.outlined.BookmarkBorder
 import androidx.compose.material.icons.outlined.Download
 import androidx.compose.material.icons.outlined.MoreHoriz
+import androidx.compose.material.icons.outlined.Refresh
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
@@ -99,12 +100,13 @@ fun MainContent(mainViewModel: MainViewModel = hiltViewModel()){
         Column(verticalArrangement = Arrangement.Center, horizontalAlignment = Alignment.CenterHorizontally) {
             CircularProgressIndicator(modifier = Modifier.size(50.dp))
         }
-    }else{
+    }
+    else if(dailyZenData.data?.isNotEmpty() == true){
         Column(modifier = Modifier
             .fillMaxSize()
             .background(color = if (isSystemInDarkTheme()) Color(0xFF201A1B) else Color(0xFFFFFFFF)),
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -189,6 +191,19 @@ fun MainContent(mainViewModel: MainViewModel = hiltViewModel()){
                         .padding(bottom = 75.dp),
                     fontSize = 12.sp
                 )
+            }
+        }
+    }
+    else{
+        Column(modifier = Modifier.
+        fillMaxSize(),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center) {
+            Text(text = "Something went wrong!\nPlease try again.",
+                textAlign = TextAlign.Center)
+
+            CustomIconButton(imageVector = Icons.Outlined.Refresh, contentDescription = "Refresh") {
+                mainViewModel.getCustomDailyZen(customDate = date.value)
             }
         }
     }

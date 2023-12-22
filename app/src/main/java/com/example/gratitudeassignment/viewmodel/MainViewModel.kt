@@ -27,7 +27,7 @@ class MainViewModel @Inject constructor(private val repository: DailyZenReposito
     }
 
     init {
-        getDailyZen(date = date)
+        getCustomDailyZen(customDate = date)
     }
 
     private fun getDailyZen(date: String){
