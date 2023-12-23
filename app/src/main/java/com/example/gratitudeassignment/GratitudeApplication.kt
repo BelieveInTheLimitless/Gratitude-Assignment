@@ -13,7 +13,7 @@ class GratitudeApplication: Application(), ImageLoaderFactory {
         return ImageLoader.Builder(this)
             .diskCache {
                 DiskCache.Builder()
-                    .maxSizeBytes(5 * 1024 * 1024)
+                    .maxSizePercent(0.001)
                     .directory(cacheDir)
                     .build()
             }
