@@ -49,6 +49,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -73,7 +74,7 @@ import coil.compose.AsyncImage
 import coil.request.CachePolicy
 import coil.request.ImageRequest
 import com.example.gratitudeassignment.R
-import com.example.gratitudeassignment.model.data.remote.DailyZenItem
+import com.example.gratitudeassignment.model.data.local.DailyZenItemEntity
 import com.example.gratitudeassignment.viewmodel.MainViewModel
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
@@ -95,13 +96,14 @@ fun MainContent(mainViewModel: MainViewModel = hiltViewModel()){
     }
 
     val dailyZenData = mainViewModel.data.value
+    val dailyZenDataItems = mainViewModel.dataFromDb.collectAsState().value
 
     if (dailyZenData.loading == true){
         Column(verticalArrangement = Arrangement.Center, horizontalAlignment = Alignment.CenterHorizontally) {
             CircularProgressIndicator(modifier = Modifier.size(50.dp))
         }
     }
-    else if(dailyZenData.data?.isNotEmpty() == true){
+    else if(dailyZenDataItems.isNotEmpty()){
         Column(modifier = Modifier
             .fillMaxSize()
             .background(color = if (isSystemInDarkTheme()) Color(0xFF201A1B) else Color(0xFFFFFFFF)),
@@ -173,7 +175,7 @@ fun MainContent(mainViewModel: MainViewModel = hiltViewModel()){
                     .verticalScroll(state = ScrollState(0), true),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                dailyZenData.data!!.forEach {
+                dailyZenDataItems.forEach {
                     CustomizedCard(data = it)
                 }
 
@@ -224,7 +226,7 @@ fun currentDay(date: String, dateId: Int): String {
 }
 
 @Composable
-fun CustomizedCard(data: DailyZenItem){
+fun CustomizedCard(data: DailyZenItemEntity){
 
     val showBottomSheet = remember { mutableStateOf(false) }
 
@@ -332,7 +334,7 @@ fun CustomizedCard(data: DailyZenItem){
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun CustomizedBottomSheet(showBottomSheet: MutableState<Boolean>, data: DailyZenItem){
+fun CustomizedBottomSheet(showBottomSheet: MutableState<Boolean>, data: DailyZenItemEntity){
 
     val sheetState = rememberModalBottomSheetState()
 
@@ -458,12 +460,14 @@ fun CustomizedBottomSheet(showBottomSheet: MutableState<Boolean>, data: DailyZen
                     textAlign = TextAlign.Start)
 
                 Row(modifier = Modifier
-                    .padding(start = 16.dp, end = 16.dp, bottom = 32.dp)
+                    .padding(bottom = 16.dp)
                     .fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceBetween) {
+                    horizontalArrangement = Arrangement.Start) {
 
                     if (isWhatsAppInstalled(packageManager)){
-                        ShareIconButton(id = R.drawable.whatsapp, contentDescription = "whatsapp") {
+                        ShareIconButton(modifier = Modifier
+                            .padding(16.dp)
+                            .size(50.dp),id = R.drawable.whatsapp, contentDescription = "whatsapp") {
                             val url = "https://api.whatsapp.com/send"
                             val intent: Intent = try {
                                 Intent(Intent.ACTION_SEND).apply {
@@ -479,7 +483,9 @@ fun CustomizedBottomSheet(showBottomSheet: MutableState<Boolean>, data: DailyZen
                     }
 
                     if(isInstagramInstalled(packageManager)){
-                        ShareIconButton(id = R.drawable.insta, contentDescription = "instagram") {
+                        ShareIconButton(modifier = Modifier
+                            .padding(16.dp)
+                            .size(50.dp), id = R.drawable.insta, contentDescription = "instagram") {
                             val url = "https://www.instagram.com/"
                             val intent: Intent = try {
                                 Intent(Intent.ACTION_SEND).apply {
@@ -495,7 +501,9 @@ fun CustomizedBottomSheet(showBottomSheet: MutableState<Boolean>, data: DailyZen
                     }
 
                     if (isFacebookInstalled(packageManager)){
-                        ShareIconButton(id = R.drawable.fb, contentDescription = "facebook") {
+                        ShareIconButton(modifier = Modifier
+                            .padding(16.dp)
+                            .size(50.dp), id = R.drawable.fb, contentDescription = "facebook") {
                             val url = "https://www.facebook.com/"
                             val intent: Intent = try {
                                 Intent(Intent.ACTION_SEND).apply {
@@ -510,11 +518,15 @@ fun CustomizedBottomSheet(showBottomSheet: MutableState<Boolean>, data: DailyZen
                         }
                     }
 
-                    CustomIconButton(imageVector = Icons.Outlined.Download, contentDescription = "Download"){
+                    CustomIconButton(modifier = Modifier
+                        .padding(16.dp)
+                        .size(50.dp), imageVector = Icons.Outlined.Download, contentDescription = "Download"){
 
                     }
 
-                    CustomIconButton(imageVector = Icons.Outlined.MoreHoriz, contentDescription = "More"){
+                    CustomIconButton(modifier = Modifier
+                        .padding(16.dp)
+                        .size(50.dp), imageVector = Icons.Outlined.MoreHoriz, contentDescription = "More"){
                         val sendIntent: Intent = Intent().apply {
                             action = Intent.ACTION_SEND
                             putExtra(Intent.EXTRA_TEXT, data.sharePrefix)
