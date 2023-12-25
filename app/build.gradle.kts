@@ -86,11 +86,6 @@ dependencies {
     // Coil
     implementation("io.coil-kt:coil-compose:2.4.0")
 
-//    Paging
-    implementation("androidx.paging:paging-runtime-ktx:3.2.1")
-    implementation("androidx.paging:paging-compose:3.2.1")
-    implementation("androidx.room:room-paging:2.6.1")
-
 //    Local date
     coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.0.4")
 
