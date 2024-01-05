@@ -118,7 +118,7 @@ fun MainContent(mainViewModel: MainViewModel = hiltViewModel()){
             ) {
                 IconButton(
                     onClick = {
-                        dateId.intValue -= 1
+                        dateId.intValue += 1
                         date.value = LocalDate
                             .now()
                             .minusDays(dateId.intValue.toLong())
@@ -127,7 +127,7 @@ fun MainContent(mainViewModel: MainViewModel = hiltViewModel()){
                         day.value = currentDay(date = date.value, dateId = dateId.intValue)
                         mainViewModel.getCustomDailyZen(customDate = date.value)
                     },
-                    enabled = (dateId.intValue > 0)
+                    enabled = (dateId.intValue < 7)
                 ) {
                     Icon(
                         imageVector = Icons.Default.KeyboardArrowLeft,
@@ -148,7 +148,7 @@ fun MainContent(mainViewModel: MainViewModel = hiltViewModel()){
                 )
                 IconButton(
                     onClick = {
-                        dateId.intValue += 1
+                        dateId.intValue -= 1
                         date.value = LocalDate
                             .now()
                             .minusDays(dateId.intValue.toLong())
@@ -157,7 +157,7 @@ fun MainContent(mainViewModel: MainViewModel = hiltViewModel()){
                         day.value = currentDay(date = date.value, dateId = dateId.intValue)
                         mainViewModel.getCustomDailyZen(customDate = date.value)
                     },
-                    enabled = (dateId.intValue < 7)
+                    enabled = (dateId.intValue > 0)
                 ) {
                     Icon(
                         imageVector = Icons.Default.KeyboardArrowRight,
