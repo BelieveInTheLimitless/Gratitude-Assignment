@@ -24,7 +24,7 @@ An attempt for the application of Android Development Intern to Gratitude App(Av
 ||||
 |:----------------------------------------:|:-----------------------------------------:|:-----------------------------------------:|
 | ![Daily Zen: Today](https://i.imgur.com/KLoCWlc.png) | ![Daily Zen: Yesterday](https://i.imgur.com/exOPigD.png) | ![DailyZen: Previous Dates](https://i.imgur.com/14LdcjR.png) |
-| ![DailyZen: Night Mode](https://i.imgur.com/K2F6513.png) | ![Sharing Data](https://i.imgur.com/GJJ1kwp.png) | ![Sharing Data: Night Mode](https://i.imgur.com/RBTS4IU.png) |
+| ![DailyZen: Night Mode](https://i.imgur.com/K2F6513.png) | ![Sharing Data](https://i.imgur.com/Lis84nd.png) | ![Sharing Data: Night Mode](https://i.imgur.com/RBTS4IU.png) |
 
 ## 🛠 Built With 
 
