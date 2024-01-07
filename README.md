@@ -1,11 +1,11 @@
 # Gratitude-Assignment
-An attempt for the application of Android Development Intern to Gratitude App(Available on Play Store) through an assignment. Couldn't make it there, but gained valuable experience by working on a real feature for an industry-level application :)
+An assignment for the application of Android Development Intern to Gratitude App(Available on Play Store) through MVVM architecture. Couldn't make it there, but gained valuable experience by working on a real feature for an industry-level application :)
 
 ## ⚙️ Features
 * List daily zens along with the features of sharing, copying the quotes
 * Open posts where url is provided
 * Visit zens for previous dates(Upto 7 days)
-* Accessibility in offline mode(Considering you've opened zen for a particular day atleast onnce with internet availability)
+* Accessibility in offline mode(Considering you've opened zen for a particular day atleast once with internet availability)
 * Dark mode
 
 ## 🚀 Technology Used
